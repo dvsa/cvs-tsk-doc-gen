@@ -118,8 +118,8 @@ export class MinistryPlateDocument extends DocumentModel {
         tyreUseCode: techRecord.techRecord_tyreUseCode,
         axles: this.populateAxles(
           techRecord.techRecord_vehicleType === 'hgv'
-            ? (techRecord.techRecord_axles as HGVAxles[] ?? [])
-            : (techRecord.techRecord_axles as TRLAxles[] ?? []),
+            ? (techRecord.techRecord_axles as HGVAxles[]) ?? []
+            : (techRecord.techRecord_axles as TRLAxles[]) ?? [],
           generateTrlEec,
         ),
       }
@@ -154,17 +154,18 @@ export class MinistryPlateDocument extends DocumentModel {
       axle4: {},
     } as Axles;
     const terminatingCondition = Math.min(axles.length, 4);
+    const sortedAxles = axles.sort((a, b) => a.axleNumber - b.axleNumber);
     for (let i = 0; i < terminatingCondition; i++) {
       plateAxles[`axle${i + 1}`] = {
         weights: {
-          gbWeight: axles[i].weights_gbWeight?.toString(),
-          eecWeight: generateTrlEec ? axles[i].weights_eecWeight?.toString() : null,
-          designWeight: axles[i].weights_designWeight?.toString(),
+          gbWeight: sortedAxles[i].weights_gbWeight?.toString(),
+          eecWeight: generateTrlEec ? sortedAxles[i].weights_eecWeight?.toString() : null,
+          designWeight: sortedAxles[i].weights_designWeight?.toString(),
         },
         tyres: {
-          tyreSize: axles[i].tyres_tyreSize,
-          plyRating: axles[i].tyres_dataTrAxles ?? axles[i].tyres_plyRating,
-          fitmentCode: axles[i].tyres_fitmentCode,
+          tyreSize: sortedAxles[i].tyres_tyreSize,
+          plyRating: sortedAxles[i].tyres_dataTrAxles ?? sortedAxles[i].tyres_plyRating,
+          fitmentCode: sortedAxles[i].tyres_fitmentCode,
         },
       };
     }
