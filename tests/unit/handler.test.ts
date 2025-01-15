@@ -1,5 +1,6 @@
 import { InvokeCommandOutput, LambdaClient } from '@aws-sdk/client-lambda';
 import { PutObjectCommandOutput, S3 } from '@aws-sdk/client-s3';
+import { SQSBatchResponse } from 'aws-lambda';
 import { DocumentName } from '../../src/enums/documentName.enum';
 import { ReasonForIssue } from '../../src/enums/reasonForIssue.enum';
 import * as Handler from '../../src/handler';
@@ -36,6 +37,13 @@ describe('handler tests', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(err.message).toBe('Event is empty');
     }
+  });
+
+  it('should return failed records', async () => {
+    const sqsEvent = pass;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const batchFails : SQSBatchResponse = await Handler.handler(sqsEvent, undefined, () => true);
+    expect(batchFails.batchItemFailures[0].itemIdentifier).toEqual(sqsEvent.Records[0].messageId);
   });
 
   it('should throw an error if document type not supported', async () => {
