@@ -59,7 +59,7 @@ describe('Document Model tests', () => {
         tyres_tyreSize: '1',
         tyres_plyRating: '2',
         tyres_fitmentCode: '3',
-        weights_gbWeight: 123,
+        weights_gbWeight: 321,
         weights_eecWeight: 123,
         weights_designWeight: 123,
       },
@@ -73,7 +73,95 @@ describe('Document Model tests', () => {
       },
     ] as unknown as HGVAxles[];
     const document = new MinistryPlateDocument(request);
-    expect(document.PLATES_DATA.axles.axle4.weights.gbWeight).toBe('123');
+    expect(document.PLATES_DATA.axles.axle4.weights.gbWeight).toBe('321');
+  });
+
+  it('should order axles by axle number', () => {
+    (request.techRecord as TechRecordType<'hgv', 'get'>).techRecord_axles = [
+      {
+        axleNumber: 4,
+        tyres_tyreSize: '1',
+        tyres_plyRating: '2',
+        tyres_fitmentCode: '3',
+        weights_gbWeight: 4,
+        weights_eecWeight: 123,
+        weights_designWeight: 123,
+      },
+      {
+        axleNumber: 2,
+        tyres_tyreSize: '1',
+        tyres_plyRating: '2',
+        tyres_fitmentCode: '3',
+        weights_gbWeight: 2,
+        weights_eecWeight: 123,
+        weights_designWeight: 123,
+      },
+      {
+        axleNumber: 1,
+        tyres_tyreSize: '1',
+        tyres_plyRating: '2',
+        tyres_fitmentCode: '3',
+        weights_gbWeight: 1,
+        weights_eecWeight: 123,
+        weights_designWeight: 123,
+      },
+      {
+        axleNumber: 3,
+        tyres_tyreSize: '9',
+        tyres_plyRating: '9',
+        tyres_fitmentCode: '9',
+        weights_gbWeight: 3,
+        weights_eecWeight: 999,
+        weights_designWeight: 999,
+      },
+    ] as unknown as HGVAxles[];
+    const document = new MinistryPlateDocument(request);
+    expect(document.PLATES_DATA.axles.axle4.weights.gbWeight).toBe('4');
+    expect(document.PLATES_DATA.axles.axle3.weights.gbWeight).toBe('3');
+    expect(document.PLATES_DATA.axles.axle2.weights.gbWeight).toBe('2');
+    expect(document.PLATES_DATA.axles.axle1.weights.gbWeight).toBe('1');
+  });
+
+  it('should remain order if no axle number and not fail', () => {
+    (request.techRecord as TechRecordType<'hgv', 'get'>).techRecord_axles = [
+      {
+        tyres_tyreSize: '1',
+        tyres_plyRating: '2',
+        tyres_fitmentCode: '3',
+        weights_gbWeight: 1,
+        weights_eecWeight: 123,
+        weights_designWeight: 123,
+      },
+      {
+        tyres_tyreSize: '1',
+        tyres_plyRating: '2',
+        tyres_fitmentCode: '3',
+        weights_gbWeight: 2,
+        weights_eecWeight: 123,
+        weights_designWeight: 123,
+      },
+      {
+        tyres_tyreSize: '1',
+        tyres_plyRating: '2',
+        tyres_fitmentCode: '3',
+        weights_gbWeight: 3,
+        weights_eecWeight: 123,
+        weights_designWeight: 123,
+      },
+      {
+        tyres_tyreSize: '9',
+        tyres_plyRating: '9',
+        tyres_fitmentCode: '9',
+        weights_gbWeight: 4,
+        weights_eecWeight: 999,
+        weights_designWeight: 999,
+      },
+    ] as unknown as HGVAxles[];
+    const document = new MinistryPlateDocument(request);
+    expect(document.PLATES_DATA.axles.axle4.weights.gbWeight).toBe('4');
+    expect(document.PLATES_DATA.axles.axle3.weights.gbWeight).toBe('3');
+    expect(document.PLATES_DATA.axles.axle2.weights.gbWeight).toBe('2');
+    expect(document.PLATES_DATA.axles.axle1.weights.gbWeight).toBe('1');
   });
 
   it('should not fail if no axles present', () => {

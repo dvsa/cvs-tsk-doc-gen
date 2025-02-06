@@ -41,3 +41,10 @@ reports
 
 # npm audit results
 npm-audit.html
+
+# idea specific hidden files
+.idea/**
+*.iml
+
+# vscode
+.vscode/**
